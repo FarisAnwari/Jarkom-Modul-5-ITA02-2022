@@ -260,10 +260,8 @@ iface eth0 inet dhcp
 > (C) Anya, putri pertama Loid, juga berpesan kepada anda agar melakukan Routing agar setiap perangkat pada jaringan tersebut dapat terhubung.
 
 Sesudah melakukan subnetting, selanjutnya kami akan melakukan routing dalam topologi ini agar setiap perangkat pada jaringan tersebut dapat terhubung. Untuk melakukan routing, dibutuhkan NetworkID, netmask, dan gateway.
-
-Dari topologi yang telah kami buat terlihat bahwa A1, A2, dan A3 terhubung dengan Westalis. Sehingga untuk A1, A2, dan A3 menggunakan Ip gatewaynya Westalis yang mengarah ke Strix (gateway = 192.211.7.146). Selanjutnya juga ditambahkan NID dan netmask untuk masing-masing A1, A2, dan A3.
-
-Begitu juga untuk A6, A7, dan A8. Dari topologi tersebut dilihat bahwa A6, A7, dan A8 terhubung dengan Ostania. Sehingga untuk A6, A7, dan A8 menggunakan Ip gatewaynya Ostania yang mengarah ke Strix (gateway = 192.211.7.150). Selanjutnya juga ditambahkan NID dan netmask untuk masing-masing  A6, A7, dan A8.
+- Dari topologi yang telah kami buat terlihat bahwa A1, A2, dan A3 terhubung dengan Westalis. Sehingga untuk A1, A2, dan A3 menggunakan Ip gatewaynya Westalis yang mengarah ke Strix (gateway = 192.211.7.146). Selanjutnya juga ditambahkan NID dan netmask untuk masing-masing A1, A2, dan A3.
+- Begitu juga untuk A6, A7, dan A8. Dari topologi tersebut dilihat bahwa A6, A7, dan A8 terhubung dengan Ostania. Sehingga untuk A6, A7, dan A8 menggunakan Ip gatewaynya Ostania yang mengarah ke Strix (gateway = 192.211.7.150). Selanjutnya juga ditambahkan NID dan netmask untuk masing-masing  A6, A7, dan A8.
 
 Oleh karena itu kami hanya perlu melakukan settingan routing pada Strix agar semua subnet yang terhubung pada Westalis dan Ostania juga terhubung pada Strix. Berikut routing yang kami gunakan:
 
