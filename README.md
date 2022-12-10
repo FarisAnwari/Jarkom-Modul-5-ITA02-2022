@@ -5,6 +5,8 @@ Anggota Kelompok ITA02:
 2. Calvindra Laksmono Kumoro (5027201020)
 3. Adinda Putri Audyna (5027201073)
 
+> (B)	Untuk menjaga perdamaian dunia, Loid ingin meminta kalian untuk membuat topologi tersebut menggunakan teknik CIDR atau VLSM setelah melakukan subnetting.
+
 Pada pengerjaan awal, kami melakukan pembagian pada setiap area untuk bisa mengetahui netmask yang akan digunakan.
 
 ![user.txt](./img/area.JPG)
@@ -255,6 +257,8 @@ auto eth0
 iface eth0 inet dhcp
 ```
 
+> (C) Anya, putri pertama Loid, juga berpesan kepada anda agar melakukan Routing agar setiap perangkat pada jaringan tersebut dapat terhubung.
+
 Sesudah melakukan subnetting, waktunya melakukan routing. Di Strix, inputkan command berikut
 
 ```
@@ -270,4 +274,58 @@ route add -net 192.211.7.136 netmask 255.255.255.248 gw 192.211.7.150
 ```
 
 Fungsi command di atas ialah menyediakan routing ke tiap subnet yang relevan.
+
+> (D) Tugas berikutnya adalah memberikan ip pada subnet Forger, Desmond, Blackbell, dan Briar secara dinamis menggunakan bantuan DHCP server. Kemudian kalian ingat bahwa kalian harus setting DHCP Relay pada router yang menghubungkannya.
+
+DHCP Server berada di node WISE, maka input di command line `apt-get install isc-dhcp-server -y`. Sesudah berhasil menginstall, edit file-file berikut:
+
+1. `/etc/default/isc-dhcp-server`
+
+![img](./img/isc-dhcp-server.JPG)
+
+Isi interface dengan `eth0`
+
+2. `/etc/dhcp/dhcpd.conf`
+
+```
+subnet 192.211.7.0 netmask 255.255.255.128 {
+   range 192.211.7.2 192.211.7.126;
+   option routers 192.211.7.1;
+   option broadcast-address 192.211.7.127;
+   option domain-name-servers 192.211.7.130;
+   default-lease-time 360;
+   max-lease-time 7200;
+}
+
+subnet 192.211.0.0 netmask 255.255.252.0 {
+   range 192.211.0.2 192.211.3.254;
+   option routers 192.211.0.1;
+   option broadcast-address 192.211.3.255;
+   option domain-name-servers 192.211.7.130;
+   default-lease-time 360;
+   max-lease-time 7200;
+}
+
+subnet 192.211.4.0 netmask 255.255.254.0 {
+   range 192.211.4.2 192.211.5.254;
+   option routers 192.211.4.1;
+   option broadcast-address 192.211.5.255;
+   option domain-name-servers 192.211.7.130;
+   default-lease-time 360;
+   max-lease-time 7200;
+}
+
+subnet 192.211.6.0 netmask 255.255.255.0 {
+   range 192.211.6.2 192.211.6.254;
+   option routers 192.211.6.1;
+   option broadcast-address 192.211.6.255;
+   option domain-name-servers 192.211.7.130;
+   default-lease-time 360;
+   max-lease-time 7200;
+}
+
+subnet 192.211.7.128 netmask 255.255.255.248{}
+```
+
+Perhatikan untuk isi range dan broadcast-address harus sesuai dengan kapasitas subnet masing-masing. Adapun router tinggal sesuaikan dengan IP interface router yang menghadap subnet tersebut, serta domain-name-servers di node Eden.
 
