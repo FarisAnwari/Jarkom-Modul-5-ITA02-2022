@@ -71,7 +71,7 @@ Pada pengerjaan awal, kami melakukan pembagian pada setiap area untuk bisa menge
     </tr>
 </table>
 
-Setelah dilakukan perhitungan tabel dimana membutuhkan total host sebanyak 1231 dan netmask terbesar yang dibutuhkan ialah /21, maka kita dapat menggunakan netmask /20 untuk memberikan pengalamatan IP pada subnet.
+Setelah dilakukan perhitungan tabel dimana membutuhkan total host sebanyak 1231 dan netmask terbesar yang dibutuhkan ialah /21, maka kita dapat menggunakan netmask /21 untuk memberikan pengalamatan IP pada subnet.
 
 Jadi untuk NID paling atas yaitu 192.211.0.0 dengan netmask /21. Berikut ini gambar pohon sekaligus subnetting untuk pembagian IP:
 
@@ -80,10 +80,10 @@ Jadi untuk NID paling atas yaitu 192.211.0.0 dengan netmask /21. Berikut ini gam
 Penjelasan:
 
 - 192.211.0.0/21 dipecah menjadi 2 cabang yaitu 192.211.0.0/22 dan 192.211.4.0/22 
-(jika panjangnya /21 maka addressessnya 2048, dimana 2048 itu 4 x 512 (255 merupakan max dalam 1 oktet)
+(jika netmasknya /22 maka address-nya ada 1024, dimana 1024 itu 4 x 256 (256 merupakan max address dalam 1 oktet) sehingga /22 memakan ruang 4 oktet dari 192.211.[x].0 hingga 192.211.[x+3].255 
 
 - 192.211.4.0/22 dipecah menjadi 2 cabang yaitu 192.211.4.0/23 dan 192.211.6.0/23
-(jika panjangnya /23 maka addressessnya 512, dimana yang mendekati 512 itu 2 x 216 = 512)
+(jika netmasknya /23 maka addressessnya 512, dimana 512 itu 2 x 256 sehingga /23 memakan ruang 2 oktet dari 192.211.[x].0 hingga 192.211.[x+1].255)
 
 
 dan seterusnya hingga bagian A18. Dengan mengetahui pembagian IP, kita dapat membuat tabel pembagian Network ID dan Subnet Mask untuk mempermudah implementasi.
@@ -144,3 +144,130 @@ dan seterusnya hingga bagian A18. Dengan mengetahui pembagian IP, kita dapat mem
         <td>192.211.7.136/29</td>
     </tr>
 </table>
+
+Seusai menyusun subnettingnya, kami mengaplikasikan subnetting di konfigurasi topologi. Edit network configuration tiap node, lalu masukkan konfigurasi berikut.
+
+```
+[Strix]
+auto eth0
+iface eth0 inet dhcp
+
+auto eth1
+iface eth1 inet static
+	address 192.211.7.145
+	netmask 255.255.255.252
+
+auto eth2
+iface eth2 inet static
+	address 192.211.7.149
+	netmask 255.255.255.252
+```
+
+```
+[Westalis]
+auto eth0
+iface eth0 inet static
+	address 192.211.7.146
+	netmask 255.255.255.252
+    gateway 192.211.7.145
+
+auto eth1
+iface eth1 inet static
+	address 192.211.7.129
+	netmask 255.255.255.248
+
+auto eth2
+iface eth2 inet static
+	address 192.211.0.1
+	netmask 255.255.252.0
+
+auto eth3
+iface eth3 inet static
+	address 192.211.7.1
+	netmask 255.255.255.128
+
+[Eden]
+auto eth0
+iface eth0 inet static
+	address 192.211.7.130
+	netmask 255.255.255.248
+    gateway 192.211.7.129
+
+[WISE]
+auto eth0
+iface eth0 inet static
+	address 192.211.7.131
+	netmask 255.255.255.248
+    gateway 192.211.7.129
+
+[Forger]
+auto eth0
+iface eth0 inet dhcp
+
+[Desmond]
+auto eth0
+iface eth0 inet dhcp
+```
+
+```
+[Ostania]
+auto eth0
+iface eth0 inet static
+	address 192.211.4.1
+	netmask 255.255.254.0
+
+auto eth1
+iface eth1 inet static
+	address 192.211.7.150
+	netmask 255.255.255.252
+    gateway 192.211.7.149
+
+auto eth2
+iface eth2 inet static
+	address 192.211.7.137
+	netmask 255.255.255.248
+
+auto eth3
+iface eth3 inet static
+	address 192.211.6.1
+	netmask 255.255.255.0
+
+[Garden]
+auto eth0
+iface eth0 inet static
+	address 192.211.7.138
+	netmask 255.255.255.248
+    gateway 192.211.7.137
+
+[SSS]
+auto eth0
+iface eth0 inet static
+	address 192.211.7.139
+	netmask 255.255.255.248
+    gateway 192.211.7.137
+
+[Blackbell]
+auto eth0
+iface eth0 inet dhcp
+
+[Briar]
+auto eth0
+iface eth0 inet dhcp
+```
+
+Sesudah melakukan subnetting, waktunya melakukan routing. Di Strix, inputkan command berikut
+
+```
+# A1 A2 A3
+route add -net 192.211.7.128 netmask 255.255.255.248 gw 192.211.7.146
+route add -net 192.211.7.0 netmask 255.255.255.128 gw 192.211.7.146
+route add -net 192.211.0.0 netmask 255.255.252.0 gw 192.211.7.146
+
+# A6 A7 A8
+route add -net 192.211.4.0 netmask 255.255.254.0 gw 192.211.7.150
+route add -net 192.211.6.0 netmask 255.255.255.0 gw 192.211.7.150
+route add -net 192.211.7.136 netmask 255.255.255.248 gw 192.211.7.150
+```
+
+Fungsi command di atas ialah menyediakan routing ke tiap subnet yang relevan.
+
